@@ -13,6 +13,11 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
+    - name: Get Version 
+      run: |
+         echo "::set-env name=FULL_VERSION::1.0.0"
+         echo "::set-env name=MINOR_VERSION::1.0"
+
     - name: Get Version Suffix (master)
       if: startsWith(github.ref, 'refs/heads/master')
       run: |
@@ -44,9 +49,9 @@ jobs:
          docker tag "trailrunningvienna/${DOCKER_REPOSITORY}:latest" "trailrunningvienna/${DOCKER_REPOSITORY}:${FULL_VERSION}" 
          docker tag "trailrunningvienna/${DOCKER_REPOSITORY}:latest" "trailrunningvienna/${DOCKER_REPOSITORY}:${MINOR_VERSION}"
       
-    #- name: Push the Docker images
-    #  run: |
-    #    docker push "trailrunningvienna/${DOCKER_REPOSITORY}:${FULL_VERSION}" 
-    #    docker push "trailrunningvienna/${DOCKER_REPOSITORY}:${MINOR_VERSION}" 
-    #    docker push "trailrunningvienna/${DOCKER_REPOSITORY}:latest"
+    - name: Push the Docker images
+      run: |
+        docker push "trailrunningvienna/${DOCKER_REPOSITORY}:${FULL_VERSION}" 
+        docker push "trailrunningvienna/${DOCKER_REPOSITORY}:${MINOR_VERSION}" 
+        docker push "trailrunningvienna/${DOCKER_REPOSITORY}:latest"
       
