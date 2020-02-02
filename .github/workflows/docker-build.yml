@@ -1,0 +1,52 @@
+name: Build & Push to Docker
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Get Version Suffix (master)
+      if: startsWith(github.ref, 'refs/heads/master')
+      run: |
+         echo "::set-env name=VERSION_SUFFIX::"
+         echo "::set-env name=DOCKER_REPOSITORY::tippecanoe-net"
+
+    - name: Get Version Suffix (not-master)
+      if: (!startsWith(github.ref, 'refs/heads/master'))
+      run: |
+         VERSION_SUFFIX=$(git rev-list --all --count)
+         echo "::set-env name=VERSION_SUFFIX::-preview${VERSION_SUFFIX}"
+         echo "::set-env name=DOCKER_REPOSITORY::tippecanoe-net-dev"
+
+    - name: Docker Login
+      run: echo ${{ secrets.DOCKER_HUB_PASSWORD }} | docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+
+    - name: Build the Docker image
+      run: docker build . --file ./src/Dockerfile --tag "trailrunningvienna/${DOCKER_REPOSITORY}:latest"
+    
+    - name: Trace version info
+      run: |
+       echo "FULL_VERSION=${FULL_VERSION}" 
+       echo "MINOR_VERSION=${MINOR_VERSION}" 
+       echo "VERSION_SUFFIX=${VERSION_SUFFIX}"
+       echo "DOCKER_REPOSITORY=${DOCKER_REPOSITORY}"
+   
+    - name: Tag the real versions
+      run: |
+         docker tag "trailrunningvienna/${DOCKER_REPOSITORY}:latest" "trailrunningvienna/${DOCKER_REPOSITORY}:${FULL_VERSION}" 
+         docker tag "trailrunningvienna/${DOCKER_REPOSITORY}:latest" "trailrunningvienna/${DOCKER_REPOSITORY}:${MINOR_VERSION}"
+      
+    #- name: Push the Docker images
+    #  run: |
+    #    docker push "trailrunningvienna/${DOCKER_REPOSITORY}:${FULL_VERSION}" 
+    #    docker push "trailrunningvienna/${DOCKER_REPOSITORY}:${MINOR_VERSION}" 
+    #    docker push "trailrunningvienna/${DOCKER_REPOSITORY}:latest"
+      
