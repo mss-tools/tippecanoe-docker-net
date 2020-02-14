@@ -71,7 +71,7 @@ RUN rm -rf /tmp/tippecanoe-src \
 
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod  +x /usr/local/bin/docker-entrypoint.sh
-RUN export PATH="$PATH:/root/.dotnet/tools" && dotnet tool install --global MSS.Tools.AzureBlob --version 3.1.* --verbosity q && dotnet tool install --global Roque.GeoJsonProducer --version 3.3.* --verbosity q
+RUN export PATH="$PATH:/root/.dotnet/tools" && dotnet tool install --global MSS.Tools.AzureBlob --version 3.1.* --verbosity q
 
 
 ENTRYPOINT ["docker-entrypoint.sh"]

@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 echo ""
-echo "Tippecanoe Runner CLI v1.0.2"
+echo "Tippecanoe Runner CLI v1.0.4"
 # SYNTAX
 #$1...geoJson file filter sample: "/*.orange.geojson"
 #$2...is the pure color name that can/should ne used for file or folder names!
@@ -11,18 +11,22 @@ trace=yes
 mainFolderPath=$(pwd)
 
 OUTER_FOLDER=$mainFolderPath/data_tiles
-FILTER=$1
+#ex $1
+FILTER=./splits/*.geojson
+#ex S2
+SUBFOLDERCOLOR=outdoor
+#ex $3
 FOLDER=$3
 
 INNER_FOLDER="/data_tiles"
-OUTPUTDIRNAME="$INNER_FOLDER/$2/";
+OUTPUTDIRNAME="$INNER_FOLDER/$SUBFOLDERCOLOR/";
 
 if [ "${trace}" = "yes" ]; then
   echo "PWD=${mainFolderPath}"
-  echo "Connectionstring=${STORAGE}"
-  echo "Container=${CONTAINER}"
-  echo "SourcePath=${SUBPATH_PBF}"
-  echo "TargetPath=${SUBPATH_GEOJSON}"
+  echo "STORAGE=${STORAGE}"
+  echo "CONTAINER=${CONTAINER}"
+  echo "SUBPATH_MBTILES=${SUBPATH_MBTILES}"
+  echo "SUBPATH_GEOJSON=${SUBPATH_GEOJSON}"
 
   echo "FILTER=$FILTER"
   echo "OUTER_FOLDER=$OUTER_FOLDER"
@@ -33,6 +37,14 @@ fi
 
 mkdir -p $OUTER_FOLDER
 mkdir -p $OUTPUTDIRNAME
+
+#azureblob download --localdirectory $BITBUCKET_CLONE_DIR/splits --connectionstring $STORAGE_MSSDEV --container $CONTAINER_PRODUCTION --azuredirectory $SUBPATH_GEOJSON_PRODUCTION --mask "*.geojson"
+# ./cli-linux/docker-convert.sh "${BITBUCKET_CLONE_DIR}/splits/*.geojson" "outdoor" "${BITBUCKET_CLONE_DIR}/splits"
+
+echo "Start download from Azure Blob Container [${CONTAINER}] ${SUBPATH_GEOJSON} => ./splits"
+azureblob download --localdirectory ./splits --connectionstring $STORAGE --container $CONTAINER --azuredirectory $SUBPATH_GEOJSON --mask "*.geojson" --verbosity d
+echo ""
+echo "Download completed!"
 
 GEOJSON_LIST=""
 for f in $FILTER; do
