@@ -64,15 +64,16 @@ WORKDIR /tmp/tippecanoe-src
 RUN make \
   && make install
 
+#we use /home as workdir btw. location for our downloads and processing (root is causeing '//' inside the scripts!)
+WORKDIR /home 
+
 # Remove the temp directory and unneeded packages
-WORKDIR /
 RUN rm -rf /tmp/tippecanoe-src \
   && apt-get -y remove --purge build-essential && apt-get -y autoremove
 
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod  +x /usr/local/bin/docker-entrypoint.sh
 RUN export PATH="$PATH:/root/.dotnet/tools" && dotnet tool install --global MSS.Tools.AzureBlob --version 3.1.* --verbosity q
-
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 
