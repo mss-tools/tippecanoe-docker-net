@@ -1,14 +1,14 @@
 #!/bin/sh
 set -e
 echo ""
-echo "Tippecanoe Runner CLI v1.0.1"
+echo "Tippecanoe Runner CLI v1.0.2"
 # SYNTAX
 #$1...geoJson file filter sample: "/*.orange.geojson"
 #$2...is the pure color name that can/should ne used for file or folder names!
+
 echo ""
 trace=yes
 mainFolderPath=$(pwd)
-imageName=niene/tippecanoe:latest
 
 OUTER_FOLDER=$mainFolderPath/data_tiles
 FILTER=$1
@@ -18,6 +18,12 @@ INNER_FOLDER="/data_tiles"
 OUTPUTDIRNAME="$INNER_FOLDER/$2/";
 
 if [ "${trace}" = "yes" ]; then
+  echo "PWD=${mainFolderPath}"
+  echo "Connectionstring=${STORAGE}"
+  echo "Container=${CONTAINER}"
+  echo "SourcePath=${SUBPATH_PBF}"
+  echo "TargetPath=${SUBPATH_GEOJSON}"
+
   echo "FILTER=$FILTER"
   echo "OUTER_FOLDER=$OUTER_FOLDER"
   echo "INNER_FOLDER=$INNER_FOLDER"

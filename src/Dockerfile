@@ -6,8 +6,11 @@ ENV DOTNET_RUNNING_IN_CONTAINER=true \
     # Enable correct mode for dotnet watch (only mode supported in a container)
     DOTNET_USE_POLLING_FILE_WATCHER=true \
     # Skip extraction of XML docs - generally not useful within an image/container - helps performance
-    NUGET_XMLDOC_MODE=skip
-
+    NUGET_XMLDOC_MODE=skip \
+    STORAGE="azure storage account connectionstring" \
+    CONTAINER="azure container name" \
+    SUBPATH_GEOJSON=./geojson/all \
+    SUBPATH_MBTILES=./pbf/all
 
 # Install .NET CLI dependencies
 RUN apt-get update \
@@ -66,5 +69,10 @@ WORKDIR /
 RUN rm -rf /tmp/tippecanoe-src \
   && apt-get -y remove --purge build-essential && apt-get -y autoremove
 
-# Run the default command to show usage
-CMD tippecanoe --help
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod  +x /usr/local/bin/docker-entrypoint.sh
+RUN export PATH="$PATH:/root/.dotnet/tools" && dotnet tool install --global MSS.Tools.AzureBlob --version 3.1.* --verbosity q && dotnet tool install --global Roque.GeoJsonProducer --version 3.3.* --verbosity q
+
+
+ENTRYPOINT ["docker-entrypoint.sh"]
+
