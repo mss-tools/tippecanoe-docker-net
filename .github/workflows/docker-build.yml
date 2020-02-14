@@ -1,3 +1,5 @@
+# Docker Build for Github Actions v0.2.0 (10.02.2010)
+
 name: Build & Push to Docker
 
 on:
@@ -13,29 +15,29 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
+    - name: Configure Settings 
+      run: |
+         echo "::set-env name=DOCKER_REPOSITORY::tippecanoe-net"
+         echo "::set-env name=DOCKER_ORGANIZATION::trailrunningvienna"
     - name: Get Version 
       run: |
          echo "::set-env name=FULL_VERSION::1.0.0"
          echo "::set-env name=MINOR_VERSION::1.0"
-
     - name: Get Version Suffix (master)
       if: startsWith(github.ref, 'refs/heads/master')
       run: |
          echo "::set-env name=VERSION_SUFFIX::"
-         echo "::set-env name=DOCKER_REPOSITORY::tippecanoe-net"
-
     - name: Get Version Suffix (not-master)
       if: (!startsWith(github.ref, 'refs/heads/master'))
       run: |
          VERSION_SUFFIX=$(git rev-list --all --count)
          echo "::set-env name=VERSION_SUFFIX::-preview${VERSION_SUFFIX}"
-         echo "::set-env name=DOCKER_REPOSITORY::tippecanoe-net-dev"
-
+         echo "::set-env name=DOCKER_REPOSITORY::${DOCKER_REPOSITORY}-dev"
     - name: Docker Login
       run: echo ${{ secrets.DOCKER_HUB_PASSWORD }} | docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
     - name: Build the Docker image
-      run: docker build . --file ./src/Dockerfile --tag "trailrunningvienna/${DOCKER_REPOSITORY}:latest"
+      run: docker build ./src --file ./src/Dockerfile --tag "${DOCKER_ORGANIZATION}/${DOCKER_REPOSITORY}:latest"
     
     - name: Trace version info
       run: |
@@ -43,15 +45,16 @@ jobs:
        echo "MINOR_VERSION=${MINOR_VERSION}" 
        echo "VERSION_SUFFIX=${VERSION_SUFFIX}"
        echo "DOCKER_REPOSITORY=${DOCKER_REPOSITORY}"
+       echo "DOCKER_ORGANIZATION=${DOCKER_ORGANIZATION}"
    
     - name: Tag the real versions
       run: |
-         docker tag "trailrunningvienna/${DOCKER_REPOSITORY}:latest" "trailrunningvienna/${DOCKER_REPOSITORY}:${FULL_VERSION}" 
-         docker tag "trailrunningvienna/${DOCKER_REPOSITORY}:latest" "trailrunningvienna/${DOCKER_REPOSITORY}:${MINOR_VERSION}"
+         docker tag "${DOCKER_ORGANIZATION}/${DOCKER_REPOSITORY}:latest" "${DOCKER_ORGANIZATION}/${DOCKER_REPOSITORY}:${FULL_VERSION}" 
+         docker tag "${DOCKER_ORGANIZATION}/${DOCKER_REPOSITORY}:latest" "${DOCKER_ORGANIZATION}/${DOCKER_REPOSITORY}:${MINOR_VERSION}"
       
     - name: Push the Docker images
       run: |
-        docker push "trailrunningvienna/${DOCKER_REPOSITORY}:${FULL_VERSION}" 
-        docker push "trailrunningvienna/${DOCKER_REPOSITORY}:${MINOR_VERSION}" 
-        docker push "trailrunningvienna/${DOCKER_REPOSITORY}:latest"
+        docker push "${DOCKER_ORGANIZATION}/${DOCKER_REPOSITORY}:latest"
+        docker push "${DOCKER_ORGANIZATION}/${DOCKER_REPOSITORY}:${FULL_VERSION}" 
+        docker push "${DOCKER_ORGANIZATION}/${DOCKER_REPOSITORY}:${MINOR_VERSION}" 
       
