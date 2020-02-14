@@ -42,7 +42,7 @@ mkdir -p $OUTPUTDIRNAME
 # ./cli-linux/docker-convert.sh "${BITBUCKET_CLONE_DIR}/splits/*.geojson" "outdoor" "${BITBUCKET_CLONE_DIR}/splits"
 
 echo "Start download from Azure Blob Container [${CONTAINER}] ${SUBPATH_GEOJSON} => ./splits"
-azureblob download --localdirectory ./splits --connectionstring $STORAGE --container $CONTAINER --azuredirectory $SUBPATH_GEOJSON --mask "*.geojson" --verbosity d
+azureblob download --localdirectory ./splits --connectionstring $STORAGE --container $CONTAINER --azuredirectory $SUBPATH_GEOJSON --mask "*.geojson" --verbosity diag
 echo ""
 echo "Download completed!"
 
