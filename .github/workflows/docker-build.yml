@@ -1,4 +1,4 @@
-# Docker Build for Github Actions v0.2.0 (10.02.2010)
+# Docker Build for Github Actions v0.2.1 (21.02.2010)
 
 name: Build & Push to Docker
 
@@ -21,7 +21,7 @@ jobs:
          echo "::set-env name=DOCKER_ORGANIZATION::trailrunningvienna"
     - name: Get Version 
       run: |
-         echo "::set-env name=FULL_VERSION::1.0.0"
+         echo "::set-env name=FULL_VERSION::1.0.1"
          echo "::set-env name=MINOR_VERSION::1.0"
     - name: Get Version Suffix (master)
       if: startsWith(github.ref, 'refs/heads/master')
