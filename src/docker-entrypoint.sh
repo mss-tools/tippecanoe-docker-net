@@ -2,7 +2,7 @@
 set -e
 export PATH="$PATH:/root/.dotnet/tools"
 echo ""
-echo "Tippecanoe Runner CLI v1.0.7"
+echo "Tippecanoe Runner CLI v1.0.8"
 echo ""
 
 # settings
@@ -38,6 +38,7 @@ azureblob download --localdirectory ./splits --connectionstring $STORAGE --conta
 echo ""
 echo "Download completed!"
 
+
 GEOJSON_LIST=""
 for f in $FILTER; do
   b=$(basename $f)
@@ -49,7 +50,7 @@ if [ "${trace}" = "yes" ]; then
     echo "GEOJSON_LIST=${GEOJSON_LIST}"  
 fi;
 
-tippecanoe -v
+#tippecanoe -v
 
 LAYER=mylayer
 
@@ -63,11 +64,12 @@ while [ "$i" -le 18 ]; do
 
   RENDER_ZOOM="-Z$i -z$i --drop-densest-as-needed"
   OUTPUT_FILENAME="${OUTER_FOLDER}/${SUBFOLDERCOLOR}_zoom_$i.mbtiles"
+
   if [ "${trace}" = "yes" ]; then
     echo "LOOP ENTER: ZOOM=${RENDER_ZOOM}, OUTPUT_FILENAME=${OUTPUT_FILENAME}, ${SUBFOLDERCOLOR}"
   fi;
 
-  tippecanoe ${RENDER_ZOOM} -f -o ${OUTPUT_FILENAME} --quiet ${GEOJSON_LIST}
+  tippecanoe -l ${LAYER} ${RENDER_ZOOM} -f -o ${OUTPUT_FILENAME} --quiet ${GEOJSON_LIST}
   
   if [ "${trace}" = "yes" ]; then
     echo ""
