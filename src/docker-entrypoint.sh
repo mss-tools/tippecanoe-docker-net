@@ -2,7 +2,7 @@
 set -e
 export PATH="$PATH:/root/.dotnet/tools"
 echo ""
-echo "Tippecanoe Runner CLI v1.0.8"
+echo "Tippecanoe Runner CLI v1.0.9"
 echo ""
 
 # settings
@@ -55,8 +55,8 @@ fi;
 LAYER=mylayer
 
 #i=0
-i=4
-while [ "$i" -le 18 ]; do
+i=3
+while [ "$i" -le 17 ]; do
   
   if [ "${trace}" = "yes" ]; then
     echo "loop=$i"
